@@ -131,4 +131,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Things Added While Development
 AUTH_USER_MODEL = "PaperTrail_App.User"  # Telling Django, who is the user in our system
-# LOGIN_URL = "PaperTrail_App:user_login"
+LOGIN_URL = "PaperTrail_App:user_login"

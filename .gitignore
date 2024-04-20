@@ -1,0 +1,9 @@
+# Virtual Environments
+env/
+venv/
+.env/
+.venv/
+
+# Caches
+PaperTrail/__pycache__/
+PaperTrail_App/__pycache__/

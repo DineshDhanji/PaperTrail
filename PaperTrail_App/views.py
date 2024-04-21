@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
-from .forms import UserLoginForm
+from .forms import UserLoginForm, DocumentForm
+from .models import Document
 
 
 def user_login(request):
@@ -43,6 +44,26 @@ def user_logout(request):
 def dashboard(request):
     return render(request, "PaperTrail_App/dashboard.html")
 
+
 def upload_docs(request):
-    return render(request, "PaperTrail_App/upload.html")
-    
+    if request.method == "POST":
+        doc_form = DocumentForm(request.POST, request.FILES)
+        if doc_form.is_valid():
+            uploaded_file = request.FILES["document"]
+
+            doc_name = uploaded_file.name
+            doc_type = "img"
+
+            new_document = Document(
+                doc=uploaded_file,
+                doc_name=doc_name,
+                owner=request.user,
+                doc_type=doc_type,
+            )
+            new_document.save()
+            messages.success(request, "Your file was successfully uploaded.")
+        else:
+            messages.error(request, "Something isn't quite right ＞︿＜")
+    else:
+        doc_form = DocumentForm()
+    return render(request, "PaperTrail_App/upload.html", {"doc_form": doc_form})

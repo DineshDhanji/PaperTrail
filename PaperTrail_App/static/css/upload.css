@@ -3,11 +3,3 @@
   height: 15rem;
   cursor: pointer;
 }
-
-.file-upload input[type="file"] {
-  display: none;
-}
-#file-selected {
-  display: inline-block;
-  margin-left: 10px;
-}

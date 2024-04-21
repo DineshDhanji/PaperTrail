@@ -5,7 +5,10 @@ body {
   font-weight: 400;
   font-style: normal;
 }
-
+a {
+  text-decoration: none;
+  color: black;
+}
 .text-berkshire {
   font-family: "Berkshire Swash", serif;
   font-weight: 400;
@@ -18,16 +21,73 @@ body {
   display: flex;
   flex-direction: column;
 }
-.input-label{
+.input-label {
   font-size: 1.1rem;
 }
 .input-field {
   height: 2.4rem;
-  border: 1px solid lightgrey;
   outline: none;
+  border: 1px solid lightgrey;
   transition: border 0.2s ease-in-out;
 }
 
 .input-field:focus {
   border: 1px solid black;
+}
+.npd {
+  height: 2.6rem;
+  max-width: 13rem;
+  min-width: max-content;
+  cursor: pointer;
+}
+
+.npp {
+  height: 2.3rem;
+  width: 2.3rem;
+  overflow: hidden;
+}
+.npp img {
+  height: 2.3rem;
+  width: 2.3rem;
+}
+.dropdown-toggle::after {
+  content: none;
+}
+
+.sidebar-container {
+  height: 80vh;
+  transition: all 0.2s ease-in-out;
+}
+
+.sb-item-d {
+  height: max-content;
+  transition: all 0.2s ease-in-out;
+  margin: 0.5rem 0;
+}
+.sb-item-d:hover {
+  background-color: #343434;
+  color: white;
+}
+.sb-item-d:hover a {
+  color: white;
+}
+.sb-active {
+  background-color: black !important;
+  color: white !important;
+}
+.sb-active a {
+  color: white !important;
+}
+.sb-icon {
+  font-size: 1.8rem;
+}
+
+@media only screen and (max-width: 992px) {
+  .sidebar-container {
+    width: 4rem;
+  }
+}
+
+.main-container {
+  height: 80vh;
 }

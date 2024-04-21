@@ -42,3 +42,7 @@ def user_logout(request):
 
 def dashboard(request):
     return render(request, "PaperTrail_App/dashboard.html")
+
+def upload_docs(request):
+    return render(request, "PaperTrail_App/upload.html")
+    

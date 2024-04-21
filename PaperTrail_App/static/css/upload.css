@@ -1,0 +1,13 @@
+.up-div {
+  border: 2px dashed black;
+  height: 15rem;
+  cursor: pointer;
+}
+
+.file-upload input[type="file"] {
+  display: none;
+}
+#file-selected {
+  display: inline-block;
+  margin-left: 10px;
+}

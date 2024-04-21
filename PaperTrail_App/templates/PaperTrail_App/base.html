@@ -25,7 +25,7 @@
   </head>
 
   <body class="bg-body-tertiary">
-    <div class="container-xxl border border-primary " style="height: max-content;">
+    <div class="container-xxl border border-primary" style="height: max-content;">
       {% block navbar %}
         <nav class="navbar bg-body-tertiary border-bottom">
           <div class="container-fluid">
@@ -33,12 +33,84 @@
               <img src="{% static 'img/Logo.png' %}" class="me-2" alt="Logo" width="35" height="35" class="d-inline-block align-text-top" />
               Paper Trail
             </a>
+
+            {% if request.user.is_authenticated %}
+              <div class="d-flex">
+                <div class="npd rounded d-flex justify-content-center align-items-center">
+                  <div class="npp rounded-circle me-2">
+                    <img src="{{ request.user.profile_picture.url }}" alt="user profile picture" />
+                  </div>
+                  <div class="npn text-truncate d-none d-lg-block">{{ request.user.username }}</div>
+                </div>
+              </div>
+            {% endif %}
           </div>
         </nav>
       {% endblock %}
-      {% block body %}
+      <div class="d-flex">
+        {% block side_bar %}
+          <div class="sidebar-container col-2 col-sm-1 col-lg-3 py-4 d-flex flex-column align-items-center">
+            <div class="rounded sb-item-d p-1 col-11">
+              <a href="{% url 'PaperTrail_App:dashboard' %}" class="d-flex justify-content-center justify-content-lg-start align-items-center">
+                <div class="sb-icon mx-2">
+                  <i class="bi bi-box-seam"></i>
+                </div>
+                <div class="sb-label ms-3 d-none d-lg-block">Dashboard</div>
+              </a>
+            </div>
 
-      {% endblock %}
+            <div class="rounded sb-item-d p-1 col-11">
+              <a href="#" class="d-flex justify-content-center justify-content-lg-start align-items-center">
+                <div class="sb-icon mx-2">
+                  <i class="bi bi-person"></i>
+                </div>
+                <div class="sb-label ms-3 d-none d-lg-block">Profile</div>
+              </a>
+            </div>
+            <div class="rounded sb-item-d p-1 col-11">
+              <a href="{% url 'PaperTrail_App:upload_docs' %}" class="d-flex justify-content-center justify-content-lg-start align-items-center">
+                <div class="sb-icon mx-2">
+                  <i class="bi bi-upload"></i>
+                </div>
+                <div class="sb-label ms-3 d-none d-lg-block">Upload</div>
+              </a>
+            </div>
+            <div class="rounded sb-item-d p-1 col-11">
+              <a href="{% url 'PaperTrail_App:user_logout' %}" class="d-flex justify-content-center justify-content-lg-start align-items-center">
+                <div class="sb-icon mx-2">
+                  <i class="bi bi-box-arrow-right"></i>
+                </div>
+                <div class="sb-label ms-3 d-none d-lg-block">Logout</div>
+              </a>
+            </div>
+          </div>
+        {% endblock %}
+        <div class="main-container border border-success col p-2">
+          {% block body %}
+
+          {% endblock %}
+        </div>
+      </div>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const allDivs = document.querySelectorAll('.sb-item-d')
+        const pageTitle = document.title.trim()
+        const titles = { PaperTail: 'Dashboard', 'Upload Docs': 'Upload' }
+      
+        // Search for the page title in the titles object
+        if (pageTitle in titles) {
+          const targetTitle = titles[pageTitle] // Get the corresponding value
+          allDivs.forEach((div) => {
+            const link = div.querySelector('a')
+            const label = link.querySelector('.sb-label')
+            const labelText = label.textContent.trim()
+            if (labelText === targetTitle) {
+              div.classList.add('sb-active') // Add your desired class here
+            }
+          })
+        }
+      })
+    </script>
   </body>
 </html>

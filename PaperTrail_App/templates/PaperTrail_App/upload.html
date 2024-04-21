@@ -1,0 +1,46 @@
+{% extends 'PaperTrail_App/base.html' %}
+{% load static %}
+
+{% block title %}
+  Upload Docs
+{% endblock %}
+
+{% block extra_headers %}
+  <link rel="stylesheet" href="{% static 'css/Upload.css' %}" />
+{% endblock %}
+
+{% block body %}
+  <div class="border rounded-3 col-12 bg-white p-5" style="height: max-content;">
+    <div class="h3">Upload Files</div>
+
+    <form action="{% url 'PaperTrail_App:upload_docs' %}" method="post">
+        {% csrf_token %}
+      <div class="bg-dark-subtle up-div rounded-3 mt-3 d-flex flex-column justify-content-center align-items-center" id="upload-trigger">
+        <div class="file-upload d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-box2-fill" style="font-size: 3rem;"></i>
+          <div class="lead">Click here to upload your doc!</div>
+          <input type="file" name="file" id="file-upload" accept="image/*,.docx,.pdf" />
+          <span id="file-selected" class="mt-5"></span>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn btn-dark mt-5">Upload</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('upload-trigger').addEventListener('click', function () {
+      // Trigger the file input click event
+      document.getElementById('file-upload').click()
+    })
+    
+    document.getElementById('file-upload').addEventListener('change', function () {
+      var filesSelected = document.getElementById('file-upload').files
+      var fileNames = 'Files selected: '
+      for (var i = 0; i < filesSelected.length; i++) {
+        fileNames += filesSelected[i].name + ', '
+      }
+      document.getElementById('file-selected').textContent = fileNames.slice(0, -2) // Remove the last comma and space
+    })
+  </script>
+{% endblock %}

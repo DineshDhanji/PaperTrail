@@ -18,4 +18,3 @@ class User(AbstractUser):
             validate_profilePicture_size,  # Set a maximum file size limit (7 MB in this example)
         ],
     )
-    

@@ -7,3 +7,6 @@ venv/
 # Caches
 PaperTrail/__pycache__/
 PaperTrail_App/__pycache__/
+
+# Folders
+UI/

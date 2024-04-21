@@ -6,6 +6,11 @@ from .forms import UserLoginForm
 
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect("PaperTrail_App:dashboard")
+
+    login_form = UserLoginForm()
+
     if request.method == "POST":
         login_form = UserLoginForm(request, data=request.POST)
         if login_form.is_valid():
@@ -18,33 +23,16 @@ def user_login(request):
                 return redirect("PaperTrail_App:dashboard")
             else:
                 messages.error(request, "Invalid username and/or password.")
-                return render(
-                    request,
-                    "PaperTrail_App/login.html",
-                    {
-                        "login_form": login_form,
-                    },
-                )
         else:
             messages.error(request, "Invalid email and/or password or submission.")
-            return render(
-                request,
-                "PaperTrail_App/login.html",
-                {
-                    "login_form": login_form,
-                },
-            )
-    else:
-        if request.user.is_authenticated:
-            return redirect("PaperTrail_App:dashboard")
-        else:
-            return render(
-                request,
-                "PaperTrail_App/login.html",
-                {
-                    "login_form": UserLoginForm(),
-                },
-            )
+
+    return render(
+        request,
+        "PaperTrail_App/login.html",
+        {
+            "login_form": login_form,
+        },
+    )
 
 
 def user_logout(request):

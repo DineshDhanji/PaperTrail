@@ -12,9 +12,11 @@ urlpatterns = [
     # Primary Views
     path("", login_required(views.dashboard), name="dashboard"),
     path("upload_docs/", login_required(views.upload_docs), name="upload_docs"),
+    path("view_doc/img/d=<int:doc_id>/", login_required(views.view_doc_img), name="view_doc_img"),
     # Login & Logout
     path("accounts/login/", views.user_login, name="user_login"),
     path("accounts/logout/", login_required(views.user_logout), name="user_logout"),
+
 ]
 # Serve static and media files only during development
 if settings.DEBUG:

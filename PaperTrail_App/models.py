@@ -39,3 +39,7 @@ class Document(models.Model):
     class Meta:
         verbose_name = "Document"
         verbose_name_plural = "Documents"
+
+    @property
+    def get_doc_link(self) -> str:
+        return f"view_doc/{self.doc_type.lower()}/d={self.pk}/"

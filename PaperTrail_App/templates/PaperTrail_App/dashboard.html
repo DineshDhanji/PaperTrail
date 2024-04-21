@@ -1,1 +1,13 @@
 {% extends 'PaperTrail_App/base.html' %}
+{% block body %}
+  <div class="p-4">
+    <div class="display-5">Your Documents</div>
+    <ol>
+      {% for doc in docs %}
+        <li>
+          <a href="{{ doc.get_doc_link }}"><div>{{ doc }}</div></a>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+{% endblock %}

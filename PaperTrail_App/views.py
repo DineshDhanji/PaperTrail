@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
@@ -42,7 +42,8 @@ def user_logout(request):
 
 
 def dashboard(request):
-    return render(request, "PaperTrail_App/dashboard.html")
+    docs = request.user.docs.all()
+    return render(request, "PaperTrail_App/dashboard.html", {"docs": docs})
 
 
 def upload_docs(request):
@@ -67,3 +68,16 @@ def upload_docs(request):
     else:
         doc_form = DocumentForm()
     return render(request, "PaperTrail_App/upload.html", {"doc_form": doc_form})
+
+
+def view_doc_img(request, doc_id):
+    # Get the requested document by its ID
+    document = get_object_or_404(Document, id=doc_id)
+
+    # Check if the current user is the owner of the document
+    if request.user == document.owner:
+        # If the user is the owner, render the view template
+        return render(request, "PaperTrail_App/view_img.html", {"document": document})
+    else:
+        # If the user is not the owner, return a 404 error
+        return render(request, "404.html", status=404)

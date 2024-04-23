@@ -11,16 +11,16 @@
   <div class="d-flex position-relative" style="height: 88vh;">
     <div class="col-12 col-lg-7 d-flex justify-content-center align-items-center">
       <div class="col-11 rounded border bg-white p-5 rounded-2">
-        <div class="h2 mb-4">Welcome back to PaperTrail 👋</div>
+        <div class="h2 mb-4 text-body">Welcome back to PaperTrail 👋</div>
         <div>
           <form action="{% url 'PaperTrail_App:user_login' %}" method="post">
             {% csrf_token %}
             <div class="input-div">
-              <label for="{{ login_form.username.id_for_label }}" class="input-label my-1">{{ login_form.username.label }}</label>
+              <label for="{{ login_form.username.id_for_label }}" class="input-label my-1 text-body">{{ login_form.username.label }}</label>
               {{ login_form.username }}
             </div>
             <div class="input-div mt-1">
-              <label for="{{ login_form.password.id_for_label }}" class="input-label my-1">{{ login_form.password.label }}</label>
+              <label for="{{ login_form.password.id_for_label }}" class="input-label my-1 text-body">{{ login_form.password.label }}</label>
               {{ login_form.password }}
             </div>
             {% if messages %}

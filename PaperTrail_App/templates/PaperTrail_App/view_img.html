@@ -25,51 +25,101 @@
     </div>
   </div>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      loadAnnotorious()
-      
-    })
+    var AnnotationWidget = function (args) {
+      console.log(args)
+      // 1. Find the annotation, if any
+      var currentAnnotation = args.annotation
+        ? args.annotation.bodies.find(function (b) {
+            return b.purpose == 'annotate'
+          })
+        : null
     
-    function fun1(purpose, annotation) {
-      console.log(purpose)
-      console.log(annotation)
-      console.log(annotation.annotation)
+      console.log(currentAnnotation)
+      // 2. Keep the annotation's value in a variable
+      var currentAnnotationValue = currentAnnotation ? currentAnnotation.value : null
+      console.log(currentAnnotationValue)
+    
+      //// 3. Triggers callbacks on user action
+      var addAnnotation = function (evt) {
+        if (currentAnnotationValue) {
+          const annotation = evt.target.parentNode.querySelector('textarea').value
+          args.onUpdateBody(currentAnnotation, {
+            type: 'TextualBody',
+            purpose: 'annotate',
+            value: annotation
+          })
+        } else {
+          const annotation = evt.target.parentNode.querySelector('textarea').value
+          args.onAppendBody({
+            type: 'TextualBody',
+            purpose: 'annotate',
+            value: annotation
+          })
+        }
+      }
+    
+      // 4. This part renders the UI elements
+      var createButton = function () {
+        var button = document.createElement('button')
+        button.innerText = 'Save'
+        button.addEventListener('click', addAnnotation)
+        return button
+      }
+    
+      var container = document.createElement('div')
+      container.className = 'r6o-widget comment editable'
+    
+      var annotationTextarea = document.createElement('textarea')
+      annotationTextarea.classList = 'r6o-editable-text anno'
+    
+      var saveButton = createButton()
+    
+      container.appendChild(annotationTextarea)
+      container.appendChild(saveButton)
+      return container
     }
-    function loadAnnotorious() {
+    
+    document.addEventListener('DOMContentLoaded', () => {
       var anno = Annotorious.init({
         image: 'document',
-        widgets: ['COMMENT']
+        widgets: [{ widget: AnnotationWidget, force: 'PlainJS' }]
       })
+    
+      // myAnnotation = {
+      //   // "@context": "http://www.w3.org/ns/anno.jsonld",
+      //   type: "Annotation",
+      //   body: [
+      //     {
+      //       type: "TextualBody",
+      //       value: "A",
+      //       purpose: "commenting",
+      //     },
+      //   ],
+      //   target: {
+      //     //  source: "http://127.0.0.1:5500/bb/image.jpg",
+      //     selector: {
+      //       type: "FragmentSelector",
+      //       conformsTo: "http://www.w3.org/TR/media-frags/",
+      //       value:
+      //         "xywh=pixel:64.55546569824219,17.111190795898438,96.83378601074219,85.55595397949219",
+      //     },
+      //   },
+      //   id: "5",
+      // };
+      //
+      //anno.addAnnotation(myAnnotation);
+    
       anno.on('createAnnotation', function (annotation) {
         fun1('Create', annotation)
       })
       anno.on('updateAnnotation', function (annotation) {
         fun1('Update', annotation)
       })
-
-      // Load old annotations
-      myAnnotation = {
-        // "@context": "http://www.w3.org/ns/anno.jsonld",
-        type: 'Annotation',
-        body: [
-          {
-            type: 'TextualBody',
-            value: 'A',
-            purpose: 'commenting'
-          }
-        ],
-        target: {
-          //  source: "http://127.0.0.1:5500/bb/image.jpg",
-          selector: {
-            type: 'FragmentSelector',
-            conformsTo: 'http://www.w3.org/TR/media-frags/',
-            value: 'xywh=pixel:2439.829345703125,1265.1448974609375,1912.778564453125,1295.2672119140625'
-          }
-        },
-        id: '1'
-      }
+    })
     
-      anno.addAnnotation(myAnnotation) 
+    function fun1(purpose, annotation) {
+      console.log(purpose)
+      console.log(annotation)
     }
   </script>
 {% endblock %}

@@ -58,6 +58,22 @@ var AnnotationWidget = function (args) {
     container.appendChild(saveButton)
     return container
 }
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Check if this cookie contains the desired name
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 var anno = null
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -67,12 +83,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     anno.on('createAnnotation', function (annotation) {
-        fun1('Create', annotation)
+        createAnnotation(annotation)
     })
-    
+
     anno.on('updateAnnotation', function (annotation) {
         fun1('Update', annotation)
     })
+
 })
 
 function loadAnnotations(doc_id) {
@@ -120,3 +137,34 @@ function loadAnnotations(doc_id) {
         });
 }
 
+function createAnnotation(annotation) {
+    console.log(annotation);
+    const doc_id = document.getElementById("document").dataset.did;
+    var csrfToken = getCookie('csrftoken');
+    const createAnnotationsURL = '/api/create_annotation/';
+    // Send POST request with the annotation data and CSRF token
+    fetch(createAnnotationsURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({annotation, doc_id})
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Annotation created:', data);
+            annotation["id"] = data["anno_id"]
+        })
+        .catch(error => {
+            console.error('Error creating annotation:', error);
+            // Handle error
+            alert("Something went wrong on the server side.");
+            window.location.reload();
+        });
+}

@@ -49,7 +49,7 @@ class ImageAnnotaion(models.Model):
     body_value = models.CharField(max_length=500)
     target_selector_value = models.CharField(max_length=255)
     doc_id = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="annotations")
-    
+    annotator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="annotations")
     class Meta:
         verbose_name = "Image Annotaion"
         verbose_name_plural = "Image Annotaions"

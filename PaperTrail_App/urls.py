@@ -19,6 +19,7 @@ urlpatterns = [
     
     # APIs Views
     path("api/get_annotations/<int:doc_id>/", api_views.get_annotations, name="get_annotations"),
+    path("api/create_annotation/", api_views.create_annotation, name="create_annotation"),
     
 
 ]

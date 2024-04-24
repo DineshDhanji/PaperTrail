@@ -1,0 +1,27 @@
+.display {
+    display: flex;
+    flex-direction: row;
+}
+
+.details {
+    padding: 1rem 1rem;
+    width: 25%;
+    display: inherit;
+    flex-direction: column;
+    word-wrap: break-word;
+}
+
+.pic {
+    width: 75%;
+    display: inherit;
+    justify-content: center;
+    align-items: center;
+}
+
+.titles {
+    margin-top: 2rem;
+}
+
+.titledetails {
+    margin-bottom: 1rem;
+}

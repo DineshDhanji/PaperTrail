@@ -45,15 +45,14 @@ class Document(models.Model):
         return f"view_doc/{self.doc_type.lower()}/d={self.pk}/"
 
 
-# class ImageAnnotaion(models.Model):
-#     type = models.CharField(max_length=11, default="Annotation")
-#     body_value = models.CharField(max_length=255)
-#     body_purpose = models.CharField(max_length=50)
-#     target_source = models.URLField()
-#     target_selector_type = models.CharField(max_length=50)
-#     target_selector_conforms_to = models.URLField()
-#     target_selector_value = models.CharField(max_length=255)
-#     annotation_id = models.CharField(max_length=255, unique=True)
+class ImageAnnotaion(models.Model):
+    body_value = models.CharField(max_length=500)
+    target_selector_value = models.CharField(max_length=255)
+    doc_id = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="annotations")
+    
+    class Meta:
+        verbose_name = "Image Annotaion"
+        verbose_name_plural = "Image Annotaions"
 
-#     def __str__(self):
-#         return f"Annotorious Annotation - {self.annotation_id}"
+    def __str__(self):
+        return f"{self.pk} - {self.doc_id.pk}"

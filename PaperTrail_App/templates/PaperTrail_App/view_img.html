@@ -6,43 +6,27 @@
   <!-- Annotorious JS -->
   <script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious@2.7.12/dist/annotorious.min.js"></script>
   <!-- Page CSS -->
-  <link rel="stylesheet" href="{% static 'css/imgshow.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/view_img.css' %}" />
 {% endblock %}
 {% block side_bar %}
 
 {% endblock %}
 {% block body %}
-  {% comment %} <div id="details">
-    <div class="lead">Document Details</div>
-    <ul>
-      <li>{{ document }}</li>
-      <li>{{ document.doc.url }}</li>
-      <li>{{ document.doc_name }}</li>
-      <li>{{ document.created }}</li>
-      <li>{{ document.doc_type }}</li>
-    </ul>
-  </div>
-  <div class="d-flex justify-content-center align-items-center py-5">
-    <div class="text-center col-10 border rounded p-2">
-      <img id="document" src="{{ document.doc.url }}" class="img-thumbnail" alt="image" />
-    </div>
-  </div> {% endcomment %}
-
-  {% comment %}me work start{% endcomment %}
-
   <div class="display">
     <div class="details">
-      <div class="lead "><u>Document Details</u></div>
-        <em class="titles">Document:</em>
-        <span class="titledetail">{{ document }}</span>
-        <em class="titles">Document URL:</em>
-        <span class="titledetail">{{ document.doc.url }}</span>
-        <em class="titles">Document Name:</em>
-        <span class="titledetail">{{ document.doc_name }}</span>
-        <em class="titles">Document created:</em>
-        <span class="titledetail">{{ document.created }}</span>
-        <em class="titles">Document type:</em>
-        <span class="titledetail">{{ document.doc_type }}</span>
+      <div class="lead">
+        <u>Document Details</u>
+      </div>
+      <em class="titles">Document:</em>
+      <span class="titledetail">{{ document }}</span>
+      <em class="titles">Document URL:</em>
+      <span class="titledetail">{{ document.doc.url }}</span>
+      <em class="titles">Document Name:</em>
+      <span class="titledetail">{{ document.doc_name }}</span>
+      <em class="titles">Document created:</em>
+      <span class="titledetail">{{ document.created }}</span>
+      <em class="titles">Document type:</em>
+      <span class="titledetail">{{ document.doc_type }}</span>
     </div>
 
     <div class="pic">
@@ -50,7 +34,6 @@
     </div>
   </div>
 
-  {% comment %}me work end{% endcomment %}
   <script>
     var AnnotationWidget = function (args) {
       // 1. Find the annotation, if any
@@ -90,7 +73,7 @@
       var createButton = function () {
         var button = document.createElement('button')
         button.innerText = 'Save'
-        button.classList = "btn btn-dark mx-2 my-3"
+        button.classList = 'btn btn-dark mx-2 my-3'
         button.addEventListener('click', addAnnotation)
         return button
       }
@@ -119,29 +102,29 @@
         widgets: [{ widget: AnnotationWidget, force: 'PlainJS' }]
       })
     
-      // myAnnotation = {
-      //   // "@context": "http://www.w3.org/ns/anno.jsonld",
-      //   type: "Annotation",
-      //   body: [
-      //     {
-      //       type: "TextualBody",
-      //       value: "A",
-      //       purpose: "commenting",
-      //     },
-      //   ],
-      //   target: {
-      //     //  source: "http://127.0.0.1:5500/bb/image.jpg",
-      //     selector: {
-      //       type: "FragmentSelector",
-      //       conformsTo: "http://www.w3.org/TR/media-frags/",
-      //       value:
-      //         "xywh=pixel:64.55546569824219,17.111190795898438,96.83378601074219,85.55595397949219",
-      //     },
-      //   },
-      //   id: "5",
-      // };
-      //
-      //anno.addAnnotation(myAnnotation);
+      myAnnotation = {
+        //'@context': 'http://www.w3.org/ns/anno.jsonld',
+        type: 'Annotation',
+        body: [
+          {
+            type: 'TextualBody',
+            purpose: 'annotate',
+            value: 'Kitty!'
+          }
+        ],
+        target: {
+          //source: 'http://127.0.0.1:8000/media/documents/48dc792e2bb1b2f43636c63bbc0d13da.jpg',
+          selector: {
+            type: 'FragmentSelector',
+            conformsTo: 'http://www.w3.org/TR/media-frags/',
+            value: 'xywh=pixel:84,116,243,88'
+          }
+        },
+        id: '2'
+      }
+    
+      anno.addAnnotation(myAnnotation)
+      console.log(myAnnotation)
     
       anno.on('createAnnotation', function (annotation) {
         fun1('Create', annotation)

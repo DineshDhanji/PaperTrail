@@ -51,3 +51,65 @@ def create_annotation(request):
             {"message": "Method not allowed", "anno_id":-1},
             status=status.HTTP_405_METHOD_NOT_ALLOWED
         )
+
+@api_view(["POST"])
+def update_annotation(request):
+    if request.method == "POST":
+        # Assuming you receive annotation data in the request data
+        annotation_data = request.data
+        
+        document = get_object_or_404(Document, id=annotation_data["doc_id"])
+        if not document:
+            print("Doc not found")
+            return Response(
+            {"message": "No such document found.", "anno_id":-1},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+            
+        annotation_instance = get_object_or_404(ImageAnnotaion, id=annotation_data["annotation"]["id"])
+        if not annotation_instance:
+            print("Annotation not found")
+            return Response(
+            {"message": "No such annotation found.", "anno_id":-1},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+        annotation_instance.body_value =annotation_data["annotation"]["body"][0]["value"]
+        annotation_instance.target_selector_value=annotation_data["annotation"]["target"]["selector"]["value"]
+        annotation_instance.save()
+        return Response(
+            {"message": "Annotation updated successfully", "anno_id": annotation_instance.pk},
+            status=status.HTTP_202_ACCEPTED
+        )
+    else:
+        return Response(
+            {"message": "Method not allowed", "anno_id":-1},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+@api_view(["POST"])
+def delete_annotation(request):
+    if request.method == "POST":
+        # Assuming you receive annotation data in the request data
+        annotation_data = request.data
+        document = get_object_or_404(Document, id=annotation_data["doc_id"])
+        if not document:
+            return Response(
+            {"message": "No such document found.", "anno_id":-1},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+            
+        annotation_instance = get_object_or_404(ImageAnnotaion, id=annotation_data["annotation"]["id"])
+        if not annotation_instance:
+             return Response(
+            {"message": "No such annotation found.", "anno_id":-1},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+        annotation_instance.delete()
+        return Response(
+            {"message": "Annotation deleted successfully"},
+            status=status.HTTP_202_ACCEPTED
+        )
+    else:
+        return Response(
+            {"message": "Method not allowed", "anno_id":-1},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )

@@ -3,12 +3,19 @@
     flex-direction: row;
 }
 
+/* div {
+    border: 1px solid black;
+} */
+
 .details {
     padding: 1rem 1rem;
     width: 25%;
     display: inherit;
     flex-direction: column;
     word-wrap: break-word;
+    overflow: hidden;
+    height: 35rem;
+    border-right: 1px solid #DEE2E6;
 }
 
 .pic {

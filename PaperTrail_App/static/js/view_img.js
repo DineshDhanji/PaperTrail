@@ -86,9 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
         createAnnotation(annotation)
     })
 
-    anno.on('updateAnnotation', function (annotation) {
-        fun1('Update', annotation)
+    anno.on('updateAnnotation', function (annotation, previous) {
+        updateAnnotation(annotation, previous)
     })
+
+    anno.on('deleteAnnotation', function (annotation) {
+        deleteAnnotation(annotation)
+    });
 
 })
 
@@ -138,7 +142,6 @@ function loadAnnotations(doc_id) {
 }
 
 function createAnnotation(annotation) {
-    console.log(annotation);
     const doc_id = document.getElementById("document").dataset.did;
     var csrfToken = getCookie('csrftoken');
     const createAnnotationsURL = '/api/create_annotation/';
@@ -149,7 +152,7 @@ function createAnnotation(annotation) {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({annotation, doc_id})
+        body: JSON.stringify({ annotation, doc_id })
     })
         .then(response => {
             if (!response.ok) {
@@ -160,6 +163,76 @@ function createAnnotation(annotation) {
         .then(data => {
             console.log('Annotation created:', data);
             annotation["id"] = data["anno_id"]
+        })
+        .catch(error => {
+            console.error('Error creating annotation:', error);
+            // Handle error
+            alert("Something went wrong on the server side.");
+            window.location.reload();
+        });
+}
+
+function updateAnnotation(annotation, previous) {
+    const newValue = annotation["body"][0]["value"]
+    const newPosition = annotation["target"]["selector"]["value"]
+    const oldValue = previous["body"][0]["value"]
+    const oldPosition = previous["target"]["selector"]["value"]
+
+    if (newValue != oldValue || newPosition != oldPosition) {
+        const doc_id = document.getElementById("document").dataset.did;
+        var csrfToken = getCookie('csrftoken');
+        const updateAnnotationsURL = '/api/update_annotation/';
+        // Send POST request with the annotation data and CSRF token
+        fetch(updateAnnotationsURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ annotation, doc_id })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Annotation updated:', data);
+            })
+            .catch(error => {
+                console.error('Error creating annotation:', error);
+                // Handle error
+                alert("Something went wrong on the server side.");
+                window.location.reload();
+            });
+    }
+    else {
+        return
+    }
+}
+
+function deleteAnnotation(annotation){
+    const doc_id = document.getElementById("document").dataset.did;
+    var csrfToken = getCookie('csrftoken');
+    const deleteAnnotationsURL = '/api/delete_annotation/';
+    // Send POST request with the annotation data and CSRF token
+    fetch(deleteAnnotationsURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ annotation, doc_id })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Annotation deleted:', data);
         })
         .catch(error => {
             console.error('Error creating annotation:', error);

@@ -16,23 +16,22 @@
 {% block body %}
   <div class="display">
     <div class="details">
-      <div class="lead">
-        <u>Document Details</u>
+      <div class="lead" style="font-size: 1.25rem; font-weight: 400;">
+        <b>Document Details</b>
       </div>
-      <em class="titles">Document:</em>
-      <span class="titledetail">{{ document }}</span>
-      <em class="titles">Document URL:</em>
-      <span class="titledetail">{{ document.doc.url }}</span>
-      <em class="titles">Document Name:</em>
+      <span class="titles"><b>Document Name:</b></span>
       <span class="titledetail">{{ document.doc_name }}</span>
-      <em class="titles">Document created:</em>
+      <span class="titles"><b>Document created:</b></span>
       <span class="titledetail">{{ document.created }}</span>
-      <em class="titles">Document type:</em>
+      <span class="titles"><b>Document type:</b></span>
       <span class="titledetail">{{ document.doc_type }}</span>
+      <span class="titles"><b>Owner:</b></span>
+      <span class="titledetail">{{ document.owner_id }}</span>
+      {% comment %}Add the username of the owner_id{% endcomment %}
     </div>
 
     <div class="pic">
-      <img id="document" data-did="{{document.pk}}" src="{{ document.doc.url }}" class="img-thumbnail" alt="image" />
+      <img id="document" data-did="{{document.pk}}"src="{{ document.doc.url }}" class="img-thumbnail" alt="image" />
     </div>
   </div>
 
@@ -41,10 +40,5 @@
       const doc_id = '{{ document.pk }}'
       loadAnnotations(doc_id)
     })
-    
-    function fun1(purpose, annotation) {
-      console.log(purpose)
-      console.log(annotation)
-    }
   </script>
 {% endblock %}

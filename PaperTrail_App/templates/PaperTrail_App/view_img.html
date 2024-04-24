@@ -7,6 +7,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious@2.7.12/dist/annotorious.min.js"></script>
   <!-- Page CSS -->
   <link rel="stylesheet" href="{% static 'css/view_img.css' %}" />
+  <!-- Page JS -->
+  <script src="{% static 'js/view_img.js' %}"></script>
 {% endblock %}
 {% block side_bar %}
 
@@ -35,103 +37,9 @@
   </div>
 
   <script>
-    var AnnotationWidget = function (args) {
-      // 1. Find the annotation, if any
-      var currentAnnotation = args.annotation
-        ? args.annotation.bodies.find(function (b) {
-            return b.purpose == 'annotate'
-          })
-        : null
-    
-      // 2. Keep the annotation's value in a variable
-      var currentAnnotationValue = currentAnnotation ? currentAnnotation.value : null
-    
-      //// 3. Triggers callbacks on user action
-      var addAnnotation = function (evt) {
-        if (currentAnnotationValue) {
-          const annotation = evt.target.parentNode.querySelector('textarea').value
-          if (annotation) {
-            args.onUpdateBody(currentAnnotation, {
-              type: 'TextualBody',
-              purpose: 'annotate',
-              value: annotation
-            })
-          }
-        } else {
-          const annotation = evt.target.parentNode.querySelector('textarea').value
-          if (annotation) {
-            args.onAppendBody({
-              type: 'TextualBody',
-              purpose: 'annotate',
-              value: annotation
-            })
-          }
-        }
-      }
-    
-      // 4. This create the save button.
-      var createButton = function () {
-        var button = document.createElement('button')
-        button.innerText = 'Save'
-        button.classList = 'btn btn-dark mx-2 my-3'
-        button.addEventListener('click', addAnnotation)
-        return button
-      }
-      // 5. This part create the textarea.
-      var createTextarea = function () {
-        var annotationTextarea = document.createElement('textarea')
-        annotationTextarea.classList = 'r6o-editable-text p-2'
-        annotationTextarea.value = currentAnnotationValue
-        return annotationTextarea
-      }
-    
-      var container = document.createElement('div')
-      container.className = 'r6o-widget comment editable'
-    
-      var annotationTextarea = createTextarea()
-      var saveButton = createButton()
-    
-      container.appendChild(annotationTextarea)
-      container.appendChild(saveButton)
-      return container
-    }
-    
     document.addEventListener('DOMContentLoaded', () => {
-      var anno = Annotorious.init({
-        image: 'document',
-        widgets: [{ widget: AnnotationWidget, force: 'PlainJS' }]
-      })
-    
-      myAnnotation = {
-        //'@context': 'http://www.w3.org/ns/anno.jsonld',
-        type: 'Annotation',
-        body: [
-          {
-            type: 'TextualBody',
-            purpose: 'annotate',
-            value: 'Kitty!'
-          }
-        ],
-        target: {
-          //source: 'http://127.0.0.1:8000/media/documents/48dc792e2bb1b2f43636c63bbc0d13da.jpg',
-          selector: {
-            type: 'FragmentSelector',
-            conformsTo: 'http://www.w3.org/TR/media-frags/',
-            value: 'xywh=pixel:84,116,243,88'
-          }
-        },
-        id: '2'
-      }
-    
-      anno.addAnnotation(myAnnotation)
-      console.log(myAnnotation)
-    
-      anno.on('createAnnotation', function (annotation) {
-        fun1('Create', annotation)
-      })
-      anno.on('updateAnnotation', function (annotation) {
-        fun1('Update', annotation)
-      })
+      const doc_id = '{{ document.pk }}'
+      loadAnnotations(doc_id)
     })
     
     function fun1(purpose, annotation) {

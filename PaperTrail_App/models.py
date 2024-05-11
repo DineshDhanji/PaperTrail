@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from .custom_validator import validate_profilePicture_size
 from django.core.validators import FileExtensionValidator
 
+from django.core.files.storage import default_storage
 
 class User(AbstractUser):
     # It already have first_name, last_name, email, password
@@ -44,12 +45,21 @@ class Document(models.Model):
     def get_doc_link(self) -> str:
         return f"view_doc/{self.doc_type.lower()}/d={self.pk}/"
 
+    def delete(self, *args, **kwargs):
+        self.doc.delete(save=False)
+        super().delete(*args, **kwargs)
+
 
 class ImageAnnotaion(models.Model):
     body_value = models.CharField(max_length=500)
     target_selector_value = models.CharField(max_length=255)
-    doc_id = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="annotations")
-    annotator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="annotations")
+    doc_id = models.ForeignKey(
+        Document, on_delete=models.CASCADE, related_name="annotations"
+    )
+    annotator = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="annotations"
+    )
+
     class Meta:
         verbose_name = "Image Annotaion"
         verbose_name_plural = "Image Annotaions"

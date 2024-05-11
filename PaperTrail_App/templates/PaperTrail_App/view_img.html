@@ -14,8 +14,8 @@
 
 {% endblock %}
 {% block body %}
-  <div class="display">
-    <div class="details">
+  <div class="display col">
+    {% comment %} <div class="details">
       <div class="lead" style="font-size: 1.25rem; font-weight: 400;">
         <b>Document Details</b>
       </div>
@@ -27,11 +27,9 @@
       <span class="titledetail">{{ document.doc_type }}</span>
       <span class="titles"><b>Owner:</b></span>
       <span class="titledetail">{{ document.owner_id }}</span>
-      {% comment %}Add the username of the owner_id{% endcomment %}
-    </div>
-
+    </div> {% endcomment %}
     <div class="pic">
-      <img id="document" data-did="{{document.pk}}"src="{{ document.doc.url }}" class="img-thumbnail" alt="image" />
+      <img id="document" data-did="{{ document.pk }}" src="{{ document.doc.url }}" class="img-thumbnail" alt="image" />
     </div>
   </div>
 

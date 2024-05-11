@@ -1,0 +1,193 @@
+{% extends 'PaperTrail_App/base.html' %}
+{% load static %}
+{% block extra_headers %}
+  <!-- Annotorious CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@recogito/annotorious@2.7.12/dist/annotorious.min.css" />
+  <!-- Annotorious JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious@2.7.12/dist/annotorious.min.js"></script>
+  <!-- PDF.js JS -->
+  <script type="module" src="{% static 'pdf.js/pdf.mjs' %}"></script>
+  <script type="module" src="{% static 'pdf.js/pdf.worker.mjs' %}"></script>
+
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="{% static 'css/view_file.css' %}" />
+  <!-- Page JS -->
+  {% comment %} <script src="{% static 'js/view_img.js' %}"></script> {% endcomment %}
+{% endblock %}
+{% block side_bar %}
+
+{% endblock %}
+{% block body %}
+  <div class="d-flex justify-content-end col">
+    <div class="info-offcanvas-btn">
+      <div data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+        <i class="bi bi-info-lg"></i>
+      </div>
+    </div>
+
+    <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title ms-2" id="offcanvasScrollingLabel">Document Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="mb-3 p-3">
+          <div class="lead">Shared Now</div>
+          <div class="mt-3">
+            <form action="#">
+              <div class="mb-3">
+                <input type="text" class="form-control" id="exampleInputEmail1" />
+                <button type="submit" class="btn btn-dark mt-2 col-12">Share</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="mb-3 p-3 border bg-light rounded">
+          <div class="lead">Shared With</div>
+          <div class="mt-3">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">An item</li>
+              <li class="list-group-item">A second item</li>
+              <li class="list-group-item">A third item</li>
+              <li class="list-group-item">A fourth item</li>
+              <li class="list-group-item">And a fifth one</li>
+            </ul>
+          </div>
+        </div>
+        <div class="details p-3 border bg-light rounded">
+          <div class="lead">Document Details</div>
+          <div class="d-flex flex-column mt-3">
+            <div class="mt-1">
+              <span class="fw-semibold">Document Name:</span>
+              <span class="">{{ document.doc_name }}</span>
+            </div>
+            <div class="mt-1">
+              <span class="fw-semibold">Document created:</span>
+              <span class="">{{ document.created }}</span>
+            </div>
+            <div class="mt-1">
+              <span class="fw-semibold">Document type:</span>
+              <span class="">{{ document.doc_type }}</span>
+            </div>
+            <div class="mt-1">
+              <span class="fw-semibold">Owner:</span>
+              <span class="">{{ document.owner_id }}</span>
+            </div>
+            <div class="mt-1">
+              <span class="fw-semibold">Shared with :</span>
+              <span class="">{{ document.owner_id }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="display col">
+    <div id="pdf-div" class="d-flex flex-column justify-content-center align-items-center border border-success col-12 col-md-10 col-lg-9 mx-auto" style="height: max-content;" data-did="{{ document.pk }}"></div>
+  </div>
+  <script type="module">
+    import { AnnotationWidget } from "{% static 'js/annotationWidget.js' %}"
+    import { createAnnotation } from "{% static 'js/pdfAnnotations.js' %}"
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      var url = '{{ document.doc.url }}'
+      console.log(url)
+      var { pdfjsLib } = globalThis
+    
+      // The workerSrc property shall be specified.
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.min.js'
+    
+      const parentDiv = document.getElementById('pdf-div')
+      let scale = 1
+    
+      try {
+        const pdf = await pdfjsLib.getDocument(url).promise
+        console.log('PDF loaded')
+    
+        for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+          const page = await pdf.getPage(pageNumber)
+          console.log('Page ' + pageNumber + ' loaded')
+    
+          var viewport = page.getViewport({ scale: scale })
+          var canvas = document.createElement('canvas')
+          var context = canvas.getContext('2d')
+          canvas.height = viewport.height
+          canvas.width = viewport.width
+    
+          // Render the PDF page onto the canvas
+          var renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          }
+          await page.render(renderContext).promise
+          console.log('Page ' + pageNumber + ' rendered')
+    
+          // Convert canvas to image
+          var img = new Image()
+          img.src = canvas.toDataURL()
+          img.className = 'border border-dark rounded my-1'
+          img.style.width = 'inherit'
+          img.style.height = 'auto'
+          img.dataset['pgno'] = pageNumber
+    
+          await new Promise((resolve) => {
+            img.onload = function () {
+              resolve(img)
+            }
+          })
+    
+          parentDiv.appendChild(img)
+          // Initialize Annotorious after each image is loaded
+          var anno = Annotorious.init({
+            image: img,
+            widgets: [{ widget: AnnotationWidget, force: 'PlainJS' }]
+          })
+          anno.on('createAnnotation', function (annotation) {
+            createAnnotation(annotation, pageNumber)
+          })
+          // anno.on('updateAnnotation', function (annotation, previous) {
+          //     updateAnnotation(annotation, previous)
+          // })
+    
+          // anno.on('deleteAnnotation', function (annotation) {
+          //     deleteAnnotation(annotation)
+          // });
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })
+    
+    // function createAnnotation(annotation) {
+    //   const doc_id = document.getElementById('document').dataset.did
+    //   // var csrfToken = getCookie('csrftoken');
+    //   const createAnnotationsURL = '/api/create_annotation/'
+    //   console.log(annotation)
+    //   // Send POST request with the annotation data and CSRF token
+    //   // fetch(createAnnotationsURL, {
+    //   //     method: 'POST',
+    //   //     headers: {
+    //   //         'Content-Type': 'application/json',
+    //   //         'X-CSRFToken': csrfToken
+    //   //     },
+    //   //     body: JSON.stringify({ annotation, doc_id })
+    //   // })
+    //   //     .then(response => {
+    //   //         if (!response.ok) {
+    //   //             throw new Error('Network response was not ok');
+    //   //         }
+    //   //         return response.json();
+    //   //     })
+    //   //     .then(data => {
+    //   //         console.log('Annotation created:', data);
+    //   //         annotation["id"] = data["anno_id"]
+    //   //     })
+    //   //     .catch(error => {
+    //   //         console.error('Error creating annotation:', error);
+    //   //         // Handle error
+    //   //         alert("Something went wrong on the server side.");
+    //   //         window.location.reload();
+    //   //     });
+    // }
+  </script>
+{% endblock %}

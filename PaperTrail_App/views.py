@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
+
 from .forms import UserLoginForm, DocumentForm
 from .models import Document
 
@@ -42,7 +43,7 @@ def user_logout(request):
 
 
 def dashboard(request):
-    docs = request.user.docs.all().order_by('-created')  
+    docs = request.user.docs.all().order_by("-created")
     return render(request, "PaperTrail_App/dashboard.html", {"docs": docs})
 
 
@@ -54,7 +55,25 @@ def upload_docs(request):
 
             doc_name = uploaded_file.name
             doc_type = "img"
-
+            # Determine the file type
+            if doc_name.endswith(".pdf"):
+                doc_type = "pdf"
+            elif doc_name.endswith((".jpg", ".jpeg", ".png")):
+                doc_type = "img"
+            elif doc_name.endswith(".docx"):
+                doc_type = "pdf"
+                # Convert DOCX to PDF
+                # docx_content = uploaded_file.read()
+                # pdf_content = convert_docx_to_pdf(docx_content)
+                doc_name = doc_name[:-5] + ".pdf"  # Rename the file with .pdf extension
+            else:
+                messages.error(
+                    request,
+                    "Unsupported file format. Please upload a PDF, DOCX, JPG, JPEG, or PNG file.",
+                )
+                return render(
+                    request, "PaperTrail_App/upload.html", {"doc_form": doc_form}
+                )
             new_document = Document(
                 doc=uploaded_file,
                 doc_name=doc_name,
@@ -78,6 +97,19 @@ def view_doc_img(request, doc_id):
     if request.user == document.owner:
         # If the user is the owner, render the view template
         return render(request, "PaperTrail_App/view_img.html", {"document": document})
+    else:
+        # If the user is not the owner, return a 404 error
+        return render(request, "404.html", status=404)
+
+
+def view_doc_pdf(request, doc_id):
+    # Get the requested document by its ID
+    document = get_object_or_404(Document, id=doc_id)
+
+    # Check if the current user is the owner of the document
+    if request.user == document.owner:
+        # If the user is the owner, render the view template
+        return render(request, "PaperTrail_App/view_pdf.html", {"document": document})
     else:
         # If the user is not the owner, return a 404 error
         return render(request, "404.html", status=404)

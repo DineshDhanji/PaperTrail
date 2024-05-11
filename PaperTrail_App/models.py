@@ -24,7 +24,6 @@ class User(AbstractUser):
 class Document(models.Model):
     DOC_CHOICES = (
         ("pdf", "PDF"),
-        ("docx", "DOCX"),
         ("img", "Image"),
     )
 

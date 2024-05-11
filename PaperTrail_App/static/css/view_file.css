@@ -1,0 +1,32 @@
+.display {
+    display: flex;
+}
+
+.details {
+    display: inherit;
+    flex-direction: column;
+    word-wrap: break-word;
+    overflow: hidden;
+    height: max-content;
+}
+
+.info-offcanvas-btn {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid black;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    background-color: transparent;
+    transition: 0.2s all ease-in-out;
+    cursor: pointer;
+}
+
+.info-offcanvas-btn:hover {
+    border: 1px solid white;
+    background-color: black;
+    color: white;
+}

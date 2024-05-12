@@ -1,0 +1,26 @@
+{% extends 'PaperTrail_App/base.html' %}
+{% load static %}
+
+
+{% block title %}
+  Shared
+{% endblock %}
+
+{% block body %}
+  <div class="p-3 col">
+    <div class="alert alert-light p-4">
+      <div class="display-5">Shared With Me</div>
+      <div class="my-3">👋 Greetings! 🌟 Step into your virtual repository for shared content. 📁 From documents to images and beyond, everything people have shared or uploaded awaits organization and access here. 🎉 Welcome to seamless collaboration!</div>
+    </div>
+    <div id="doc-table-div" class="table-responsive rounded border"></div>
+  </div>
+  <script type="module">
+    import { renderloading, fetchSharedDocuments } from "{% static 'js/utils.js' %}"
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('Default settings have been initialized by server.')
+      renderloading()
+      fetchSharedDocuments()
+    })
+  </script>
+{% endblock %}

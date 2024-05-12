@@ -64,6 +64,10 @@ def dashboard(request):
     return render(request, "PaperTrail_App/dashboard.html")
 
 
+def shared_docs(request):
+    return render(request, "PaperTrail_App/shared.html")
+
+
 def upload_docs(request):
     if request.method == "POST":
         doc_form = DocumentForm(request.POST, request.FILES)
@@ -111,12 +115,12 @@ def view_doc_img(request, doc_id):
     document = get_object_or_404(Document, id=doc_id)
 
     # Check if the current user is the owner of the document
-    if request.user == document.owner:
+    if request.user == document.owner or request.user in document.shared_with.all():
         # If the user is the owner, render the view template
         return render(request, "PaperTrail_App/view_img.html", {"document": document})
     else:
         # If the user is not the owner, return a 404 error
-        return render(request, "404.html", status=404)
+        return page_not_found_404(request, exception=404)
 
 
 def view_doc_pdf(request, doc_id):
@@ -124,9 +128,17 @@ def view_doc_pdf(request, doc_id):
     document = get_object_or_404(Document, id=doc_id)
 
     # Check if the current user is the owner of the document
-    if request.user == document.owner:
+    if request.user == document.owner or request.user in document.shared_with.all():
         # If the user is the owner, render the view template
         return render(request, "PaperTrail_App/view_pdf.html", {"document": document})
     else:
         # If the user is not the owner, return a 404 error
-        return render(request, "404.html", status=404)
+        return page_not_found_404(request, exception=404)
+
+
+def page_not_found_404(request, exception=404):
+    return render(
+        request,
+        "PaperTrail_App/404.html",
+        status=404,
+    )

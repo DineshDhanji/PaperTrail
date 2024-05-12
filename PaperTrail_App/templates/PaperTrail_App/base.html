@@ -70,11 +70,11 @@
               </a>
             </div>
             <div class="rounded sb-item-d p-1 col-11">
-              <a href="{% url 'PaperTrail_App:dashboard' %}" class="d-flex justify-content-center justify-content-lg-start align-items-center">
+              <a href="{% url 'PaperTrail_App:shared_docs' %}" class="d-flex justify-content-center justify-content-lg-start align-items-center">
                 <div class="sb-icon mx-2">
                   <i class="bi bi-people"></i>
                 </div>
-                <div class="sb-label ms-3 d-none d-lg-block">Shared</div>
+                <div class="sb-label ms-3 d-none d-lg-block">Shared with me</div>
               </a>
             </div>
             <div class="rounded sb-item-d p-1 col-11">
@@ -106,7 +106,7 @@
       document.addEventListener('DOMContentLoaded', () => {
         const allDivs = document.querySelectorAll('.sb-item-d')
         const pageTitle = document.title.trim()
-        const titles = { PaperTail: 'Dashboard', 'Upload Docs': 'Upload', 'Shared': 'Shared', }
+        const titles = { PaperTail: 'Dashboard', 'Upload Docs': 'Upload', 'Shared': 'Shared with me', }
       
         // Search for the page title in the titles object
         if (pageTitle in titles) {

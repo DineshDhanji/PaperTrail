@@ -37,3 +37,67 @@
     align-items: center;
     width: inherit;
 }
+
+.a9s-inner {
+    stroke: black;
+    cursor: move !important;
+}
+
+.a9s-annotation .a9s-inner,
+.a9s-selection .a9s-inner {
+    stroke: #150e0e;
+}
+
+.a9s-annotation .a9s-inner:hover,
+.a9s-selection .a9s-inner:hover {
+    stroke: black;
+}
+
+.a9s-annotation.editable .a9s-inner {
+    stroke: #8F00FF;
+    cursor: move !important;
+}
+
+.a9s-handle .a9s-handle-inner {
+    stroke: black;
+    fill: #8F00FF;
+}
+.a9s-handle .a9s-handle-inner :hover {
+    stroke: black;
+    fill: #8F00FF;
+}
+
+.a9s-annotation.editable .a9s-inner:hover {
+    fill: #8F00FF;
+    opacity: 0.2;
+}
+
+.r6o-btn {
+    background-color: #8F00FF !important;
+    border: 1px solid #8A2BE2 !important;
+    border-radius: 5px;
+    transition: 0.2s all ease-in-out;
+}
+
+.outline {
+    background-color: transparent !important;
+    color: #8A2BE2 !important;
+    border: 1px solid #8A2BE2 !important;
+}
+
+.outline:hover {
+    color: white !important;
+    background-color: #8F00FF !important;
+}
+
+.r6o-btn:hover,
+.outline:hover {
+    background-color: #8A2BE2;
+}
+
+.r6o-btn.delete-annotation {
+    color: white !important;
+}
+.delete-annotation{
+    margin: 7px 0px;
+}

@@ -4,8 +4,12 @@ from rest_framework import status
 
 from django.shortcuts import get_object_or_404
 
-from .models import Document, Annotaions
-from .serializers import AnnotaionsSerializer, DocumentDetailsSerializer
+from .models import Document, Annotaions, User
+from .serializers import (
+    AnnotaionsSerializer,
+    DocumentDetailsSerializer,
+    SharedDocUserDetailsSerializer,
+)
 
 
 @api_view(["GET"])
@@ -37,6 +41,131 @@ def get_documents(request):
     return Response(
         {"docs": serialized_data},
         status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["POST"])
+def share_with(request):
+    if request.method == "POST":
+        data = request.data
+        username = data.get("username")
+        doc_id = data.get("docID")
+        if not username or not doc_id:
+            return Response(
+                {"message": "Username and document ID are required.", "error": True},
+                status=status.HTTP_202_ACCEPTED,
+            )
+        try:
+            document = get_object_or_404(Document, id=doc_id)
+            user = get_object_or_404(User, username=username)
+        except:
+            return Response(
+                {"message": "User/Document was not found.", "error": True},
+                status=status.HTTP_202_ACCEPTED,
+            )
+        if user == request.user:
+            return Response(
+                {
+                    "message": "You can not add yourself. Are you sure what are you doing?",
+                    "error": True,
+                },
+                status=status.HTTP_202_ACCEPTED,
+            )
+        if user in document.shared_with.all():
+            return Response(
+                {
+                    "message": "Document is already shared with this user.",
+                    "error": True,
+                },
+                status=status.HTTP_202_ACCEPTED,
+            )
+
+        document.shared_with.add(user)
+        return Response(
+            {
+                "message": f"Document successfully shared with {user.username}.",
+                "error": True,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    return Response(
+        {"message": "Method not allowed"},
+        status=status.HTTP_405_METHOD_NOT_ALLOWED,
+    )
+
+
+@api_view(["GET"])
+def get_share_docs(request):
+    documents = request.user.shared_docs.all().order_by("-created")
+    serializer = DocumentDetailsSerializer(data=documents, many=True)
+    serializer.is_valid()  # Ensure data is valid before serialization
+    serialized_data = serializer.data  # Access serialized data
+
+    return Response(
+        {"docs": serialized_data},
+        status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def get_shared_list(request, doc_id):
+    document = get_object_or_404(Document, id=doc_id)
+    print(document)
+    if not document or (
+        request.user != document.owner
+        and not request.user in document.shared_with.all()
+    ):
+        return Response(
+            {"message": "Invalid document", "users": []},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    serializer = SharedDocUserDetailsSerializer(
+        data=document.shared_with.all(), many=True
+    )
+    serializer.is_valid()  # Ensure data is valid before serialization
+    serialized_data = serializer.data  # Access serialized data
+
+    return Response(
+        {"message": "Retrieved successfully.", "users": serialized_data},
+        status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["POST"])
+def remove_access(request):
+    if request.method == "POST":
+        data = request.data
+        user_id = data.get("userID")
+        doc_id = data.get("docID")
+        if not user_id or not doc_id:
+            return Response(
+                {"message": "Username and document ID are required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        try:
+            document = get_object_or_404(Document, id=doc_id)
+            user = get_object_or_404(User, pk=user_id)
+        except:
+            return Response(
+                {"message": "User/Document was not found."},
+                status=status.HTTP_202_ACCEPTED,
+            )
+        if not user in document.shared_with.all():
+            return Response(
+                {"message": "User/Document was not found."},
+                status=status.HTTP_202_ACCEPTED,
+            )
+        else:
+            document.shared_with.remove(user)
+            return Response(
+                {"message": "Successfully removed the user"},
+                status=status.HTTP_200_OK,
+            )
+    return Response(
+        {"message": "Invalid method."},
+        status=status.HTTP_403_FORBIDDEN,
     )
 
 

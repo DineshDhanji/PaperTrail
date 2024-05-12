@@ -12,7 +12,70 @@
 
 {% endblock %}
 {% block body %}
-  <div class="display justify-content-center align-items-cneter col my-5">
+  <div class="d-flex justify-content-end col">
+    <div class="info-offcanvas-btn" id="info-offcanvas">
+      <div data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+        <i class="bi bi-info-lg"></i>
+      </div>
+    </div>
+
+    <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title ms-2" id="offcanvasScrollingLabel">Document Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="mb-3 p-3">
+          <div class="lead">Share Now</div>
+          <div class="mt-3">
+            <form id="shared-form">
+              <div class="mb-3">
+                <input type="text" class="form-control focus-ring focus-ring-dark" id="shared-username" />
+                <button type="submit" class="btn btn-dark mt-2 col-12">Share</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="mb-3 p-3 border bg-light rounded">
+          <div class="lead">Shared With</div>
+          <div class="mt-3" id="shared-list">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+              <div class="spinner-border text-dark" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <div>Fetching entries</div>
+            </div>
+          </div>
+        </div>
+        <div class="details p-3 border bg-light rounded">
+          <div class="lead">Document Details</div>
+          <div class="d-flex flex-column mt-3">
+            <div class="mt-1">
+              <span class="fw-semibold">Document Name:</span>
+              <span>{{ document.doc_name }}</span>
+            </div>
+            <div class="mt-1">
+              <span class="fw-semibold">Document created:</span>
+              <span>{{ document.created }}</span>
+            </div>
+            <div class="mt-1">
+              <span class="fw-semibold">Document type:</span>
+              <span>{{ document.doc_type }}</span>
+            </div>
+            <div class="mt-1">
+              <span class="fw-semibold">Owner:</span>
+              <span>{{ document.owner_id }}</span>
+            </div>
+            <div class="mt-1">
+              <span class="fw-semibold">Shared with :</span>
+              <span>{{ document.get_shared_with_count }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="display justify-content-center align-items-cneter col my-3">
     <div class="">
       <img id="document" data-did="{{ document.pk }}" src="{{ document.doc.url }}" class="img-thumbnail" alt="image" />
     </div>
@@ -20,10 +83,22 @@
   <script type="module">
     import { AnnotationWidget } from "{% static 'js/annotationWidget.js' %}"
     import { loadAnnotations } from "{% static 'js/imgAnnotations.js' %}"
-  
+    import { sharedWith, refreshSharedList } from "{% static 'js/utils.js' %}"
+    
     document.addEventListener('DOMContentLoaded', () => {
       const doc_id = '{{ document.pk }}'
       loadAnnotations(doc_id)
+    
+      document.getElementById('shared-form').addEventListener('submit', (e) => {
+        e.preventDefault()
+        const form = e.target
+        const username = form.querySelector('#shared-username').value
+    
+        sharedWith(username, doc_id)
+      })
+      document.getElementById('info-offcanvas').addEventListener('click', () => {
+        refreshSharedList(doc_id)
+      })
     })
   </script>
 {% endblock %}

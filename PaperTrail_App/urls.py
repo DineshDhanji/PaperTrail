@@ -19,6 +19,7 @@ urlpatterns = [
     path("accounts/logout/", login_required(views.user_logout), name="user_logout"),
     
     # APIs Views
+    path("api/get_documents/", login_required(api_views.get_documents), name="get_documents"),
     path("api/get_annotations/<int:doc_id>/", login_required(api_views.get_annotations), name="get_annotations"),
     path("api/create_annotation/", login_required(api_views.create_annotation), name="create_annotation"),
     path("api/update_annotation/", login_required(api_views.update_annotation), name="update_annotation"),

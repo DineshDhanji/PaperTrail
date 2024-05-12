@@ -6,6 +6,7 @@ from django.core.validators import FileExtensionValidator
 
 from django.core.files.storage import default_storage
 
+
 class User(AbstractUser):
     # It already have first_name, last_name, email, password
     profile_picture = models.ImageField(
@@ -49,7 +50,7 @@ class Document(models.Model):
         super().delete(*args, **kwargs)
 
 
-class ImageAnnotaion(models.Model):
+class Annotaions(models.Model):
     body_value = models.CharField(max_length=500)
     target_selector_value = models.CharField(max_length=255)
     doc_id = models.ForeignKey(
@@ -58,10 +59,11 @@ class ImageAnnotaion(models.Model):
     annotator = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="annotations"
     )
+    page_number = models.IntegerField(default=1, blank=False, null=False)
 
     class Meta:
-        verbose_name = "Image Annotaion"
-        verbose_name_plural = "Image Annotaions"
+        verbose_name = "Annotaion"
+        verbose_name_plural = "Annotaions"
 
     def __str__(self):
         return f"{self.pk} - {self.doc_id.pk}"

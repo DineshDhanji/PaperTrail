@@ -1,45 +1,21 @@
 {% extends 'PaperTrail_App/base.html' %}
 {% load static %}
+
 {% block body %}
   <div class="p-3 col">
     <div class="alert alert-light p-4">
       <div class="display-5">Your Documents</div>
       <div class="my-3">👋 Welcome! 🌟 This is the spot where you'll find all your uploaded files. 📁 Whether it's documents, images, or any other files you've shared or uploaded, they'll be neatly organized and displayed here for your convenience. 🎉</div>
     </div>
-    <div class="table-responsive rounded border">
-      {% if docs %}
-        <table class="table table-hover table-striped">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">File Name</th>
-              <th scope="col">Created</th>
-              <th scope="col">Type</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for doc in docs %}
-              <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>
-                  <a href="{{ doc.get_doc_link }}" class="text-break"><div>{{ doc }}</div></a>
-                </td>
-                <td>{{ doc.created }}</td>
-                <td>{{ doc.doc_type }}</td>
-                <td>
-                  <button class="delete-btn btn btn-danger btn-sm" onclick="deleteDoc('{{ doc.pk }}')"><i class="bi bi-trash3"></i></button>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <div class="alert alert-light" style="margin-bottom: 0;">
-          <div colspan="5" class="text-secondary text-center">You got no doc ~(>_<。)＼</div>
-        </div>
-      {% endif %}
-    </div>
+    <div id="doc-table-div" class="table-responsive rounded border"></div>
   </div>
-  <script src="{% static 'js/utils.js' %}"></script>
+  <script type="module">
+    import { renderloading, fetchDocuments } from "{% static 'js/utils.js' %}"
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('Default settings have been initialized by server.')
+      renderloading()
+      fetchDocuments()
+    })
+  </script>
 {% endblock %}

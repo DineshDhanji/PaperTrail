@@ -4,8 +4,8 @@ from rest_framework import status
 
 from django.shortcuts import get_object_or_404
 
-from .models import Document, ImageAnnotaion
-from .serializers import ImageAnnotaionSerializer
+from .models import Document, Annotaions
+from .serializers import AnnotaionsSerializer, DocumentDetailsSerializer
 
 
 @api_view(["GET"])
@@ -17,12 +17,25 @@ def get_annotations(request, doc_id):
             {"annos": []},
             status=status.HTTP_404_NOT_FOUND,
         )
-    serializer = ImageAnnotaionSerializer(data=document.annotations.all(), many=True)
+    serializer = AnnotaionsSerializer(data=document.annotations.all(), many=True)
     serializer.is_valid()  # Ensre data is valid before serialization
     serialized_data = serializer.data  # Access serialized data
 
     return Response(
         {"annos": serialized_data},
+        status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def get_documents(request):
+    documents = request.user.docs.all().order_by("-created")
+    serializer = DocumentDetailsSerializer(data=documents, many=True)
+    serializer.is_valid()  # Ensure data is valid before serialization
+    serialized_data = serializer.data  # Access serialized data
+
+    return Response(
+        {"docs": serialized_data},
         status=status.HTTP_200_OK,
     )
 
@@ -38,13 +51,20 @@ def create_annotation(request):
                 {"message": "Method not allowed", "anno_id": -1},
                 status=status.HTTP_405_METHOD_NOT_ALLOWED,
             )
-        annotation_instance = ImageAnnotaion.objects.create(
+
+        try:
+            page_number = annotation_data["pageNumber"]
+        except:
+            page_number = 1
+
+        annotation_instance = Annotaions.objects.create(
             body_value=annotation_data["annotation"]["body"][0]["value"],
             target_selector_value=annotation_data["annotation"]["target"]["selector"][
                 "value"
             ],
             doc_id=document,
             annotator=request.user,
+            page_number=page_number,
         )
         annotation_instance.save()
         return Response(
@@ -76,7 +96,7 @@ def update_annotation(request):
             )
 
         annotation_instance = get_object_or_404(
-            ImageAnnotaion, id=annotation_data["annotation"]["id"]
+            Annotaions, id=annotation_data["annotation"]["id"]
         )
         if not annotation_instance:
             print("Annotation not found")
@@ -118,7 +138,7 @@ def delete_annotation(request):
             )
 
         annotation_instance = get_object_or_404(
-            ImageAnnotaion, id=annotation_data["annotation"]["id"]
+            Annotaions, id=annotation_data["annotation"]["id"]
         )
         if not annotation_instance:
             return Response(

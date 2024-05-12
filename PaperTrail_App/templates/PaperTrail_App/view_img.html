@@ -7,8 +7,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious@2.7.12/dist/annotorious.min.js"></script>
   <!-- Page CSS -->
   <link rel="stylesheet" href="{% static 'css/view_file.css' %}" />
-  <!-- Page JS -->
-  <script src="{% static 'js/view_img.js' %}"></script>
 {% endblock %}
 {% block side_bar %}
 
@@ -32,8 +30,10 @@
       <img id="document" data-did="{{ document.pk }}" src="{{ document.doc.url }}" class="img-thumbnail" alt="image" />
     </div>
   </div>
-
-  <script>
+  <script type="module">
+    import { AnnotationWidget } from "{% static 'js/annotationWidget.js' %}"
+    import { loadAnnotations } from "{% static 'js/imgAnnotations.js' %}"
+  
     document.addEventListener('DOMContentLoaded', () => {
       const doc_id = '{{ document.pk }}'
       loadAnnotations(doc_id)

@@ -43,8 +43,7 @@ def user_logout(request):
 
 
 def dashboard(request):
-    docs = request.user.docs.all().order_by("-created")
-    return render(request, "PaperTrail_App/dashboard.html", {"docs": docs})
+    return render(request, "PaperTrail_App/dashboard.html")
 
 
 def upload_docs(request):

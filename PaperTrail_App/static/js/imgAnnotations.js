@@ -1,5 +1,5 @@
-import AnnotationWidget from "./annotationWidget.js";
-import getCookie from "./utils.js";
+import { AnnotationWidget } from "./annotationWidget.js";
+import { getCookie } from "./utils.js";
 
 var anno = null
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 })
 
-function loadAnnotations(doc_id) {
+export function loadAnnotations(doc_id) {
     const getAnnotationsURL = `/api/get_annotations/${doc_id}/`
     fetch(getAnnotationsURL, {
         method: 'GET',
@@ -68,7 +68,7 @@ function loadAnnotations(doc_id) {
         });
 }
 
-function createAnnotation(annotation) {
+export function createAnnotation(annotation) {
     const doc_id = document.getElementById("document").dataset.did;
     var csrfToken = getCookie('csrftoken');
     const createAnnotationsURL = '/api/create_annotation/';
@@ -99,7 +99,7 @@ function createAnnotation(annotation) {
         });
 }
 
-function updateAnnotation(annotation, previous) {
+export function updateAnnotation(annotation, previous) {
     const newValue = annotation["body"][0]["value"]
     const newPosition = annotation["target"]["selector"]["value"]
     const oldValue = previous["body"][0]["value"]
@@ -139,7 +139,7 @@ function updateAnnotation(annotation, previous) {
     }
 }
 
-function deleteAnnotation(annotation) {
+export function deleteAnnotation(annotation) {
     const doc_id = document.getElementById("document").dataset.did;
     var csrfToken = getCookie('csrftoken');
     const deleteAnnotationsURL = '/api/delete_annotation/';

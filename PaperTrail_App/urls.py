@@ -17,6 +17,7 @@ urlpatterns = [
     # Login & Logout
     path("accounts/login/", views.user_login, name="user_login"),
     path("accounts/logout/", login_required(views.user_logout), name="user_logout"),
+    path("accounts/signup/", views.user_signup, name="user_signup"),
     
     # APIs Views
     path("api/get_documents/", login_required(api_views.get_documents), name="get_documents"),

@@ -31,9 +31,7 @@
               </div>
             {% endif %}
             <div class="d-flex flex-column align-items-center col-sm-12 col-md-10 my-3">
-              <button class="rounded-pill btn btn-dark col-12 mb-1">Log in</button>
-              <div class="text-secondary my-2" style="font-size: 0.7rem;">OR</div>
-              <button class="rounded-pill border btn btn-light col-12 mb-1">Continue with Google</button>
+              <button class="rounded-pill btn btn-dark col-12 mb-1">Login</button>
             </div>
           </form>
         </div>
@@ -46,8 +44,10 @@
     </div>
 
     <div class="position-absolute bg-body-tertiary d-flex justify-content-center align-items-center rounded-pill p-2" style="height: 3rem; font-size: 0.9rem; bottom: 5rem; top: 90%; left: 50%; transform: translate(-50%, -50%); width: 100%;">
-      <div class="text-secondary mx-3">New to PaperTrail? Join our platform now</div>
-      <button class="btn btn-outline-dark rounded-pill" style="font-size: 0.9rem;">Sign Up</button>
+      <div class="text-secondary mx-3">New to PaperTrail? Join our platform now!</div>
+      <a href="{% url 'PaperTrail_App:user_signup' %}">
+        <button class="btn btn-outline-dark rounded-pill" style="font-size: 0.9rem;">Sign Up</button>
+      </a>
     </div>
   </div>
 {% endblock %}

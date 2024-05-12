@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 
-from .forms import UserLoginForm, DocumentForm
+from .forms import UserLoginForm, DocumentForm, UserCreationForm
 from .models import Document
 
 
@@ -40,6 +40,24 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect("PaperTrail_App:user_login")
+
+
+def user_signup(request):
+    if request.method == "POST":
+        signup_form = UserCreationForm(request.POST)
+        if signup_form.is_valid():
+            user = signup_form.save()
+            login(request, user)
+            return redirect("PaperTrail_App:dashboard")
+    else:
+        signup_form = UserCreationForm()
+    return render(
+        request,
+        "PaperTrail_App/signup.html",
+        {
+            "signup_form": signup_form,
+        },
+    )
 
 
 def dashboard(request):

@@ -12,21 +12,8 @@
 
 {% endblock %}
 {% block body %}
-  <div class="display col">
-    {% comment %} <div class="details">
-      <div class="lead" style="font-size: 1.25rem; font-weight: 400;">
-        <b>Document Details</b>
-      </div>
-      <span class="titles"><b>Document Name:</b></span>
-      <span class="titledetail">{{ document.doc_name }}</span>
-      <span class="titles"><b>Document created:</b></span>
-      <span class="titledetail">{{ document.created }}</span>
-      <span class="titles"><b>Document type:</b></span>
-      <span class="titledetail">{{ document.doc_type }}</span>
-      <span class="titles"><b>Owner:</b></span>
-      <span class="titledetail">{{ document.owner_id }}</span>
-    </div> {% endcomment %}
-    <div class="pic">
+  <div class="display justify-content-center align-items-cneter col my-5">
+    <div class="">
       <img id="document" data-did="{{ document.pk }}" src="{{ document.doc.url }}" class="img-thumbnail" alt="image" />
     </div>
   </div>

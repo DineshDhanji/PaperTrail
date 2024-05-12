@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import User, Document, Annotaions
 
-
 class AnnotaionsAdminPanel(admin.ModelAdmin):
     list_display = [
         "pk",

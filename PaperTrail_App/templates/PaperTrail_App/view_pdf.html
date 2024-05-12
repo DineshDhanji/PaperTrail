@@ -83,7 +83,7 @@
     </div>
   </div>
   <div class="display col">
-    <div id="pdf-div" class="d-flex flex-column justify-content-center align-items-center border border-success col-12 col-md-10 col-lg-9 mx-auto" style="height: max-content;" data-did="{{ document.pk }}"></div>
+    <div id="pdf-div" class="d-flex flex-column justify-content-center align-items-center bg-light col-12 col-md-11 col-lg-10 mx-auto" style="height: max-content;" data-did="{{ document.pk }}"></div>
   </div>
   <script type="module">
     import { AnnotationWidget } from "{% static 'js/annotationWidget.js' %}"
@@ -128,7 +128,7 @@
           // Convert canvas to image
           const img = new Image()
           img.src = canvas.toDataURL()
-          img.className = 'border border-dark rounded my-1'
+          img.className = 'border rounded my-1'
           img.style.width = 'inherit'
           img.style.height = 'auto'
           img.dataset['pgno'] = pageNumber

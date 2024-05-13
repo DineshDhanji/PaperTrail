@@ -24,6 +24,11 @@ urlpatterns = [
         login_required(views.view_doc_pdf),
         name="view_doc_pdf",
     ),
+    path(
+        "search_doc/",
+        login_required(views.search_doc),
+        name="search_doc",
+    ),
     # Login & Logout
     path("accounts/login/", views.user_login, name="user_login"),
     path("accounts/logout/", login_required(views.user_logout), name="user_logout"),
@@ -74,6 +79,11 @@ urlpatterns = [
         "api/delete_annotation/",
         login_required(api_views.delete_annotation),
         name="delete_annotation",
+    ),
+    path(
+        "api/search_query/",
+        login_required(api_views.search_query),
+        name="search_query",
     ),
 ]
 

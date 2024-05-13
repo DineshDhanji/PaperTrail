@@ -325,3 +325,99 @@ function removeAccess(userID, docID) {
             alert(error.message);
         });
 }
+
+function renderLoading() {
+    const outputDiv = document.getElementById("outputDiv");
+    outputDiv.innerText = '';
+    outputDiv.innerHTML = `
+                            <div class="alert alert-light d-flex flex-column justify-content-center align-items-center">
+                                <div class="spinner-border text-dark" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            <div class="mt-2">Fetching the results ...</div>
+                            </div> 
+    `;
+}
+export function initiateSearchQuery(query, checkboxValues) {
+    renderLoading();
+    const searchQueryURL = '/api/search_query/';
+    const csrftoken = getCookie();
+    fetch(searchQueryURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({ query, checkboxValues })
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Something went wrong.");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data['message']);
+            updateOutputDiv(data['docs'])
+        })
+        .catch((error) => {
+            console.log(error)
+            renderError()
+        });
+}
+
+function updateOutputDiv(documents) {
+    const outputDiv = document.getElementById("outputDiv");
+    outputDiv.innerText = '';
+
+    if (documents.length === 0) {
+        outputDiv.innerHTML = `
+        <div class="alert alert-warning">Nothing matches your search query.</div>
+        `;
+    }
+    else {
+        const tableDiv = document.createElement("table");
+        tableDiv.className = "table table-hover table-striped";
+        tableDiv.innerHTML = `
+                                        <thead>
+                                            <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">File Name</th>
+                                            <th scope="col">Created</th>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Owner</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    `;
+        const tBodyDiv = tableDiv.querySelector("tbody");
+
+        documents.forEach((doc, index) => {
+            let trComponent = document.createElement("tr");
+            // Format the date and time
+            const formattedDate = new Date(doc.created).toLocaleDateString('en-US');
+            const formattedTime = new Date(doc.created).toLocaleTimeString('en-US');
+            trComponent.innerHTML = `
+                                            <td>${index + 1}</td>
+                                            <td>
+                                                <a href="/${doc.get_doc_link}" class="text-break"><div>${doc.doc_name}</div></a>
+                                            </td>
+                                            <td>${formattedDate}, ${formattedTime}</td>
+                                            <td>${doc.doc_type}</td>
+                                            <td>${doc.get_owner_username}</td>
+                    `;
+            tBodyDiv.appendChild(trComponent);
+        });
+        outputDiv.append(tableDiv);
+    }
+
+}
+function renderError() {
+    const outputDiv = document.getElementById("outputDiv");
+    outputDiv.innerText = '';
+    outputDiv.innerHTML = `
+    <div class="alert alert-danger">
+    <span class="fw-semibold me-2">Server Error:</span>Unable to entertain your query at the moment. ~(>_<。)＼</div>
+    `;
+}

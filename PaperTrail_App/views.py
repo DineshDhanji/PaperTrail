@@ -142,3 +142,7 @@ def page_not_found_404(request, exception=404):
         "PaperTrail_App/404.html",
         status=404,
     )
+
+
+def search_doc(request):
+    return render(request, "PaperTrail_App/search_doc.html")

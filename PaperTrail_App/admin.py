@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import User, Document, Annotaions
+from .models import User, Document, Annotations
 
-class AnnotaionsAdminPanel(admin.ModelAdmin):
+class AnnotationsAdminPanel(admin.ModelAdmin):
     list_display = [
         "pk",
         "annotator",
@@ -43,4 +43,4 @@ class DocumentAdminPanel(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(User)
 admin.site.register(Document, DocumentAdminPanel)
-admin.site.register(Annotaions, AnnotaionsAdminPanel)
+admin.site.register(Annotations, AnnotationsAdminPanel)

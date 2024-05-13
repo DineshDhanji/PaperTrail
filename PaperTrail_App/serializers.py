@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import User, Annotaions, Document
+from .models import User, Annotations, Document
 
 
-class AnnotaionsSerializer(serializers.ModelSerializer):
+class AnnotationsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Annotaions
+        model = Annotations
         fields = "__all__"
 
 

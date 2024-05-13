@@ -3,10 +3,11 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
-from .models import Document, Annotaions, User
+from .models import Document, Annotations, User
 from .serializers import (
-    AnnotaionsSerializer,
+    AnnotationsSerializer,
     DocumentDetailsSerializer,
     SharedDocUserDetailsSerializer,
 )
@@ -21,7 +22,7 @@ def get_annotations(request, doc_id):
             {"annos": []},
             status=status.HTTP_404_NOT_FOUND,
         )
-    serializer = AnnotaionsSerializer(data=document.annotations.all(), many=True)
+    serializer = AnnotationsSerializer(data=document.annotations.all(), many=True)
     serializer.is_valid()  # Ensre data is valid before serialization
     serialized_data = serializer.data  # Access serialized data
 
@@ -186,7 +187,7 @@ def create_annotation(request):
         except:
             page_number = 1
 
-        annotation_instance = Annotaions.objects.create(
+        annotation_instance = Annotations.objects.create(
             body_value=annotation_data["annotation"]["body"][0]["value"],
             target_selector_value=annotation_data["annotation"]["target"]["selector"][
                 "value"
@@ -225,7 +226,7 @@ def update_annotation(request):
             )
 
         annotation_instance = get_object_or_404(
-            Annotaions, id=annotation_data["annotation"]["id"]
+            Annotations, id=annotation_data["annotation"]["id"]
         )
         if not annotation_instance:
             print("Annotation not found")
@@ -267,7 +268,7 @@ def delete_annotation(request):
             )
 
         annotation_instance = get_object_or_404(
-            Annotaions, id=annotation_data["annotation"]["id"]
+            Annotations, id=annotation_data["annotation"]["id"]
         )
         if not annotation_instance:
             return Response(
@@ -298,6 +299,90 @@ def delete_docfile(request):
                 {"message": "Document deleted successfully."},
                 status=status.HTTP_202_ACCEPTED,
             )
+
+    return Response(
+        {"message": "Method not allowed"},
+        status=status.HTTP_405_METHOD_NOT_ALLOWED,
+    )
+
+
+@api_view(["POST"])
+def search_query(request):
+    if request.method == "POST":
+        data = request.data
+        query = data.get("query")
+        checked_values = data.get("checkboxValues")
+
+        if not query:
+            return Response(
+                {"message": "Query is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Initialize an empty list to store search results
+        search_results = []
+
+        if not checked_values or "Document" in checked_values:
+            # Search in Document model
+            document_results = Document.objects.filter(
+                Q(doc_name__icontains=query, owner=request.user)
+                | Q(owner__username__icontains=query, owner=request.user)
+                | Q(doc_type__icontains=query, owner=request.user)
+            )
+            search_results.extend(document_results)
+
+        # Search in Annotations model if "Annotation" is checked
+        if "Annotation" in checked_values:
+            # Get all annotations of the current user
+            user_annotations = request.user.annotations.all()
+
+            # Filter annotations based on the query
+            filtered_annotations = user_annotations.filter(
+                Q(body_value__icontains=query)
+            )
+
+            # Add associated documents to the search results
+            for annotation in filtered_annotations:
+                search_results.append(annotation.doc_id)
+
+            # Search in shared documents annotations
+            shared_documents = request.user.shared_docs.all()
+            for shared_doc in shared_documents:
+                shared_annotations = shared_doc.annotations.filter(
+                    Q(body_value__icontains=query)
+                    | Q(annotator__username__icontains=query)
+                )
+
+                # Add associated shared documents to the search results
+                for annotation in shared_annotations:
+                    search_results.append(annotation.doc_id)
+
+            # Search in user own documents but someone else annotations
+            own_documents_with_other_people_annotations = request.user.docs.all()
+
+            for shared_doc in own_documents_with_other_people_annotations:
+                shared_annotations = shared_doc.annotations.filter(
+                    Q(body_value__icontains=query)
+                    | Q(annotator__username__icontains=query)
+                )
+
+                # Add associated shared documents to the search results
+                for annotation in shared_annotations:
+                    search_results.append(annotation.doc_id)
+
+        # Search in Shared documents if "Shared" is checked
+        if "Shared" in checked_values:
+            shared_documents = request.user.shared_docs.filter(
+                Q(doc_name__icontains=query)
+                | Q(owner__username__icontains=query)
+                | Q(doc_type__icontains=query)
+            )
+            search_results.extend(shared_documents)
+
+        # Serialize the search results
+        serializer = DocumentDetailsSerializer(search_results, many=True)
+
+        return Response({"message": "Successfull Retrieval.", "docs": serializer.data})
 
     return Response(
         {"message": "Method not allowed"},

@@ -55,7 +55,7 @@ class Document(models.Model):
         super().delete(*args, **kwargs)
 
 
-class Annotaions(models.Model):
+class Annotations(models.Model):
     body_value = models.CharField(max_length=500)
     target_selector_value = models.CharField(max_length=255)
     doc_id = models.ForeignKey(
@@ -67,8 +67,8 @@ class Annotaions(models.Model):
     page_number = models.IntegerField(default=1, blank=False, null=False)
 
     class Meta:
-        verbose_name = "Annotaion"
-        verbose_name_plural = "Annotaions"
+        verbose_name = "Annotation"
+        verbose_name_plural = "Annotations"
 
     def __str__(self):
         return f"{self.pk} - {self.doc_id.pk}"
